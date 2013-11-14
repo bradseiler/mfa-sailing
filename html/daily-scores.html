@@ -1,0 +1,5 @@
+<ul>
+<? while (races.hasNext()) {
+     var race = races.next(); ?>
+   <li><a href="<?= scores_page.getChildByName(race.date).getUrl(); ?>"><?= dateNumToDate(race.date).toDateString() ?></a>
+<? } ?>
