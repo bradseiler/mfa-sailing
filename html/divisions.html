@@ -1,0 +1,43 @@
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<table>
+<tr>
+  <th>Sailor Name</th>
+  <th>Sail #</th>
+  <th id="regular">Regular</th>
+  <th id="regatta">Regatta</th>
+  <th>A Races</th>
+  <th>B Races</th>
+</tr>
+<? for (var i = 0; i < sailors.length; ++i) {
+     var sailor = sailors[i]; var bgcolor = i % 2 == 0 ? "#fff" : "#eee"; ?>
+<tr class="sailor" style="background-color:<?= bgcolor; ?>">
+  <td><?= sailorName(sailor); ?></td>
+  <td><?= sailNumber(sailor); ?></td>
+  <td class="regular"><?= sailor.regular_division; ?></td>
+  <td class="regatta"><?= sailor.regatta_division; ?></td>
+  <td><?= sailor.num_races_a; ?></td>
+  <td><?= sailor.num_races_b; ?></td>
+</tr>
+<? } ?>
+</table>
+<script>
+function sortByType(t) {
+  var sorted_rows = $(".sailor").get().sort(
+    function(a, b) {
+      var keyA = $(a).find("." + type).html();
+      var keyB = $(b).find("." + type).html()
+      if (keyA < keyB) {
+        return -1;
+      }
+      if (keyB > keyA) {
+        return 1;
+      }
+      return 0;
+    });
+  sorted_rows.map(function(row) {
+    $('table').child('tbody').append(row);
+  });
+}
+$("#regular").onclick(sortByType("regular"));
+$("#regatta").onclick(sortByType("regatta"));
+</script>
