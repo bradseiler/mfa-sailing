@@ -1,0 +1,105 @@
+<table style="float:right">
+<tr>
+  <th>Division</th>
+  <th>Sailors</th>
+  <th>Races</th>
+  <th>Sail Size</th>
+</tr>
+<tr>
+  <th>A</th>
+  <td><?= race.num_sailors_a; ?></td>
+  <td><?= race.num_races_a; ?></td>
+  <td><?= race.sail_size_a; ?></td>
+</tr>
+<tr>
+  <th>B</th>
+  <td><?= race.num_sailors_b; ?></td>
+  <td><?= race.num_races_b; ?></td>
+  <td><?= race.sail_size_b; ?></td>
+</tr>
+<? if (race.num_sailors_guest > 0) { ?>
+<tr>
+  <th>Guest</th>
+  <td><?= race.num_sailors_guest; ?></td>
+</tr>
+<? } ?>
+</table>
+
+<table>
+<tr>
+  <th>Date</th>
+  <td><?= dateNumToDate(race.date).toDateString(); ?></td>
+</tr>
+<tr>
+  <th>Race Commmittee</th>
+  <td><?= [sailorName(db.load(sailor_id)) for each (sailor_id in race.rc_credit)].join(", "); ?></td>
+</tr>
+<tr>
+  <th>Divisions Sailed</th>
+  <td><?= race.divs_sailed; ?></td>
+</tr>
+<tr>
+  <th>Regatta Day?</th>
+  <td><?= race.is_regatta ? "Yes" : "No"; ?></td>
+</tr>
+</table>
+
+<? if (race.divs_sailed == "Separately") { ?>
+<h3>A Division</h3>
+<? } else { ?>
+<h3>All Divisions</h3>
+<? } var first_b = false; ?>
+<table>
+<tr>
+  <th>Sail #</th>
+  <th>Sailor</th>
+  <th>Div</th>
+  <th>Div Place</th>
+  <? for (var i = 1; i <= race.num_races_a; ++i) { ?>
+    <th>R<?= i; ?></th>
+  <? } ?>
+  <th>Points</th>
+  <th>Overall Place</th>
+</tr>
+<? for each (var score in race.scores) {
+    var sailor = db.load(score.sailor_id);
+  if (race.divs_sailed == "Separately" && !first_b && score.division == "B") {
+    first_b = true; ?>
+</table>
+<h3>B Division</h3>
+<table>
+<tr>
+  <th>Sail #</th>
+  <th>Sailor</th>
+  <th>Div</th>
+  <th>Div Place</th>
+  <? for (var i = 1; i <= race.num_races_b; ++i) { ?>
+    <th>R<?= i; ?></th>
+  <? } ?>
+  <th>Points</th>
+  <th>Overall Place</th>
+</tr>
+<?  } ?>
+<tr>
+  <? var div_color = score.division == "A" ? "#afa" : "#ffa"; ?>
+  <td><?= score.sail_num; ?></td>
+  <td><?= sailorName(sailor); ?></td>
+  <? if (score.division == "G") { ?>
+    <td></td><td></td>
+  <? } else { ?>
+    <td style="background-color:<?= div_color; ?>"><?= score.division; ?></td>
+    <td style="background-color:<?= div_color; ?>"><?= score.division_place; ?></td>
+  <? } ?>
+  <? for each (var p in score.points) { ?>
+    <td><?= p; ?></td>
+  <? } ?>
+  <td><?= score.total; ?></td>
+  <td><?= first_b ? score.overall_place - race.num_sailors_a : score.overall_place; ?></td>
+  <? if (score.division != "G") {
+       var nextDiv = nextDivision(race, score);
+       if (score.division != nextDiv) { ?>
+       <td style="font-style:italic">Moves to <?= nextDiv; ?></td>
+  <? } } ?>
+</tr>
+<? } ?>
+</table>
