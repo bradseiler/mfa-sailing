@@ -1,0 +1,27 @@
+<? for each (var div in ["a", "b"]) {
+  var other_div = div == "a" ? "b" : "a"?>
+<h2>Division <?= div.toUpperCase(); ?></h2>
+<table>
+<tr>
+  <th>Rank</th>
+  <th>Sailor</th>
+  <th>Days Sailed</th>
+  <th>Raw Score</th>
+  <th>RC Credits</th>
+  <th>Total Qual Credits</th>
+</tr>
+<? for (var i = 0; i < sailors[div].length; ++i) {
+  var sailor = sailors[div][i]; 
+  var bgcolor = i % 2 == 0 ? "#fff" : "#eee";
+  var fgcolor = sailor["num_races_" + div] >= sailor["num_races_" + other_div] ? "#000" : "#333"; ?>
+<tr style="background-color:<?= bgcolor; ?>; color:<?= fgcolor; ?>">
+  <td><?= i+1; ?></td>
+  <td><?= sailorName(sailor); ?></td>
+  <td><?= sailor["num_races_" + div]; ?></td>
+  <td><?= (sailor["score_" + div] / sailor["denom_" + div]).toFixed(5); ?></td>
+  <td><?= sailor.rc_credits; ?></td>
+  <td><?= sailor.rc_credits + sailor.num_races_a + sailor.num_races_b; ?></td>
+</tr>
+<? } ?>
+</table>
+<? } ?>
